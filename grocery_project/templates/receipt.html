@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Receipt</h2>
+
+<p><b>Payment Method:</b> {{ sale.payment_method }}</p>
+<p><b>Total Amount:</b> ₹{{ sale.total_amount }}</p>
+
+<table class="table mt-3">
+  <tr>
+    <th>Product</th>
+    <th>Qty</th>
+    <th>Price</th>
+    <th>Subtotal</th>
+  </tr>
+
+  {% for i in items %}
+  <tr>
+    <td>{{ i.product.name }}</td>
+    <td>{{ i.qty }}</td>
+    <td>₹{{ i.price }}</td>
+    {{ i.subtotal }}
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="/" class="btn btn-primary">Back to Home</a>
+
+{% endblock %}
+

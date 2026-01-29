@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load cart_tags %}
+{% block content %}
+
+<h3>Our Products</h3>
+
+{% if products %}
+<div class="row">
+{% for p in products %}
+  <div class="col-md-3 mb-4">
+    <div class="card h-100 shadow">
+
+      {% if p.image %}
+        <img src="{{ p.image.url }}" class="card-img-top"
+             style="height:180px; object-fit:cover;">
+      {% else %}
+        <div style="height:180px;background:#f0f0f0;
+                    display:flex;align-items:center;justify-content:center;">
+          No Image
+        </div>
+      {% endif %}
+
+      <div class="card-body text-center">
+        <h5>{{ p.name }}</h5>
+        <p>₹{{ p.price }}</p>
+
+        {% if request.session.cart and p.id|stringformat:"s" in request.session.cart %}
+          <div class="d-flex justify-content-center gap-2 align-items-center">
+            <button onclick="updateCart('{{p.id}}','minus')"
+                    class="btn btn-outline-danger btn-sm">−</button>
+
+            <span id="qty-{{p.id}}" class="fw-bold">
+              {{ request.session.cart|get_item:p.id }}
+            </span>
+
+            <button onclick="updateCart('{{p.id}}','plus')"
+                    class="btn btn-outline-success btn-sm">+</button>
+          </div>
+        {% else %}
+          <button onclick="addToCart('{{p.id}}')"
+                  class="btn btn-success btn-sm">
+            Add
+          </button>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+{% else %}
+<div class="text-center mt-5">
+  <h4>No products found</h4>
+  <p class="text-muted">
+    {% if query %}
+      No results for "<b>{{ query }}</b>"
+    {% else %}
+      No products available
+    {% endif %}
+  </p>
+</div>
+{% endif %}
+
+<!-- 🔥 AJAX SCRIPT -->
+<script>
+function getCSRFToken() {
+  return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function addToCart(pid) {
+  fetch(`/billing/add/${pid}/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": getCSRFToken()
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    location.reload(); // show + / -
+  });
+}
+
+function updateCart(pid, action) {
+  fetch(`/billing/update/${pid}/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": getCSRFToken(),
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `action=${action}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.qty > 0) {
+      document.getElementById(`qty-${pid}`).innerText = data.qty;
+    } else {
+      location.reload(); // removed
+    }
+
+    // update cart badge
+    const badge = document.getElementById("cart-count");
+    if (badge) {
+      badge.innerText = data.cart_count;
+    }
+  });
+}
+</script>
+
+{% csrf_token %}
+{% endblock %}

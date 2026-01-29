@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Your Cart</h2>
+
+{% if cart_items %}
+<table class="table">
+  <tr>
+    <th>Product</th>
+    <th>Qty</th>
+    <th>Price</th>
+    <th>Total</th>
+  </tr>
+
+  {% for item in cart_items %}
+  <tr>
+    <td>{{ item.product.name }}</td>
+    <td>
+      <div class="d-flex gap-2 align-items-center">
+        <button onclick="updateCart('{{ item.product.id }}','minus')"
+                class="btn btn-outline-danger btn-sm">−</button>
+
+        <span id="qty-{{ item.product.id }}">{{ item.qty }}</span>
+
+        <button onclick="updateCart('{{ item.product.id }}','plus')"
+                class="btn btn-outline-success btn-sm">+</button>
+      </div>
+    </td>
+    <td>₹{{ item.product.price }}</td>
+    <td id="subtotal-{{ item.product.id }}">₹{{ item.subtotal }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h4 id="grand-total">Grand Total: ₹{{ total }}</h4>
+
+<a href="/billing/checkout/" class="btn btn-success">Checkout</a>
+
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+
+<!-- 🔥 AJAX SCRIPT -->
+<script>
+function getCSRFToken() {
+  return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function updateCart(pid, action) {
+  fetch(`/billing/update/${pid}/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": getCSRFToken(),
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `action=${action}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.qty === 0) {
+      location.reload(); // item removed
+      return;
+    }
+
+    document.getElementById(`qty-${pid}`).innerText = data.qty;
+    document.getElementById("cart-count").innerText = data.cart_count;
+    location.reload(); // recalc totals safely
+  });
+}
+</script>
+
+{% csrf_token %}
+{% endblock %}

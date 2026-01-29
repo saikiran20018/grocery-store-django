@@ -1,0 +1,14 @@
+<a href="/">Home</a> |
+<a href="/billing/cart/">Cart</a> |
+<a href="/products/list/">Inventory</a>
+<hr>
+
+
+<h2>Add Product</h2>
+<form method="post">
+{% csrf_token %}
+Name: <input type="text" name="name"><br>
+Price: <input type="number" name="price"><br>
+Quantity: <input type="number" name="quantity"><br>
+<button>Add</button>
+</form>

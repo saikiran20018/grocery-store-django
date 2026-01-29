@@ -1,0 +1,25 @@
+<a href="/">Home</a> |
+<a href="/billing/cart/">Cart</a> |
+<a href="/products/list/">Inventory</a>
+<hr>
+
+
+<h2>Billing</h2>
+<form method="post">
+{% csrf_token %}
+{% for p in products %}
+{{p.name}} (₹{{p.price}}) :
+<input type="number" name="{{p.id}}" min="0"><br>
+{% endfor %}
+
+<br>
+Payment Method:
+<select name="payment">
+  <option>Cash</option>
+  <option>Card</option>
+  <option>UPI</option>
+</select>
+
+<br><br>
+<button>Generate Bill</button>
+</form>

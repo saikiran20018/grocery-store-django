@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load cart_tags %}
+
+<div class="row align-items-center my-5">
+
+  <div class="col-md-6">
+    <h1 class="fw-bold display-5">
+      Fresh And <span class="text-success">Organic</span> Products For You
+    </h1>
+    <p class="lead">
+      Shop healthy groceries online. Fresh fruits, vegetables & daily needs.
+    </p>
+    <a href="/products/" class="btn btn-success btn-lg">Shop Now</a>
+  </div>
+
+  <div class="col-md-3 text-center">
+    <img src="/media/products/fruits_basket.jpg" class="img-fluid">
+  </div>
+
+  <div class="col-md-3 text-center">
+    <img src="/media/products/grocery_basket.jpg" class="img-fluid">
+  </div>
+
+</div>
+
+
+<h3 class="text-center my-5">
+  <span class="bg-success text-white px-4 py-2 rounded">Our Features</span>
+</h3>
+
+<div class="row text-center">
+  <div class="col-md-3">
+    <div class="card shadow p-3">
+      <h5>Fresh Items</h5>
+      <p>Direct from farms</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow p-3">
+      <h5>Fast Delivery</h5>
+      <p>Within hours</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow p-3">
+      <h5>Secure Payment</h5>
+      <p>100% safe</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow p-3">
+      <h5>Best Quality</h5>
+      <p>Top rated</p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="text-center mb-5">
+  <h1>Fresh And Organic Products For You</h1>
+  <p>Shop healthy groceries online</p>
+  <a href="/products/" class="btn btn-success">Shop Now</a>
+</div>
+
+<h3 class="text-center mb-4">Product Categories</h3>
+
+<div class="row mt-4 justify-content-center">
+
+{% for c in categories %}
+  <div class="col-md-3 col-sm-6 mb-4 text-center">
+    <div class="card shadow h-100">
+
+      {% if c.image %}
+      <img src="{{ c.image.url }}" class="card-img-top" style="height:180px; object-fit:cover;">
+      {% else %}
+      <div style="height:180px; background:#eee; display:flex; align-items:center; justify-content:center;">
+        No Image
+      </div>
+      {% endif %}
+
+      <div class="card-body">
+        <h5 class="card-title">{{ c.name }}</h5>
+        <a href="/products/?cat={{ c.id }}" class="btn btn-outline-success mt-2">Shop Now</a>
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+
+</div>
+
+{% endblock %}
